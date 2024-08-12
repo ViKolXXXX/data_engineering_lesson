@@ -20,7 +20,7 @@ class Human:
 class Rota:
     __humans = list()
 
-    def add_human(self, humans: list): # Добавление людей
+    def add_human(self, humans: list):
         self.__humans = self.__humans + humans
 
 
