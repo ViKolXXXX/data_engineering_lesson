@@ -245,7 +245,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
+.idea
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
@@ -255,7 +255,8 @@ cython_debug/
 
 /.idea/parseAvito.iml
 /.idea/.gitignore
-/.idea/misc.xml
+/idea/misc.xml
+/idea/Python_learn.iml
 /.idea/modules.xml
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
