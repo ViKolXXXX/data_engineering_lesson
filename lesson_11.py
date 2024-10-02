@@ -84,11 +84,6 @@ class Format:
         l_csv = self.read_csv(name_csv_file)
         l_csv.to_json(name_json_file, orient='records', lines=True)
 
-
-
-
-
-
 object_class_format = Format()
 
 name_file_yaml = "file_yaml.yaml" # например name_file.yaml
