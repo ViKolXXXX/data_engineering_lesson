@@ -2,6 +2,8 @@
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
+*.xml
+*.iml
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -245,7 +247,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
+.idea
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
@@ -253,3 +255,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+/.idea/parseAvito.iml
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/Python_learn.iml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
