@@ -4,6 +4,7 @@
 # 3. Вместо моего ключа подставить свой - код можно взять у меня в проекте - но лучше напрограммируйте вручную - чтобы запомнить, что делать надо.
 # 4. Получить курс рубля к доллару и евро к доллару за каждый день ноября 2023 года - и записать в 1 csv файл в 3 колонки:
 # Дата  Валюта  Курс к доллару
+from datetime import datetime
 import time
 
 import requests
@@ -11,61 +12,55 @@ import pandas as pd
 
 class Currency:
 
-    __api_key = 'bf1fe2196cf10451b7c562f2d27a486b'
+    __api_key = '15a7f1474ead9825c1b17e37c52009b4'
 
-    def get_response_currency_date(self, date_r, source_currencies, currencies):
-        # Запрашивем у сервера ответ date_r '2023-02-01' , source_currencies 'USD', currencies 'RUB, EUR'
-        URL = (f'https://api.currencylayer.com/historical?access_key={self.__api_key}&date={date_r}&currencies={currencies}&source={source_currencies}&format = 1')
-        response_server = requests.get(url=URL)
+    def __init__(self, curr:str):
+        if self.__validate_val(curr, str):
+            self.curr = curr
 
-        return response_server
+    @classmethod
+    def __validate_val(cls, val, type_val):  # Валидатор значений
+        if isinstance(val, type_val):
+            return True
 
-    def parse_get_currency_date(self, response_server, currency_from_to:str):
-        # Получаем числовое значение о валюте
+    def get_curr_server_response(self, curs_date):
+        # Получаем ответ от сервера валют
+        time.sleep(1)  # Требование сервиса 1 запрос 1 в секунду
+        curs_date = datetime.strptime(curs_date, "%Y-%m-%d").isoformat()
+        URL = (f' https://currate.ru/api/?get=rates&pairs={self.curr}&date={curs_date}&key={self.__api_key}')
+        currency_server_response = requests.get(url=URL)
+        return currency_server_response
 
-        print(response_server.json())
-        result = response_server.json()
-
-        print(result)
-
-        return result.get('quotes').get(currency_from_to)
-
-
-# class ConvertTOCSV:
-#
-#
-#
-#     def pandas_to_csv_file(self, name_file, l=None):
-
-
-currencies = 'RUB, EUR'
-source_currencies = 'USD' # Не работает, только по платной подписке
-# date_r = '2023-02-01'
-currency_from_to = 'USDRUB'
-
-
-RubUSD = Currency()
-
-dict_resultat = {}
-
-res_list = []
-def res():
-    for i in range(1, 31):
-        time.sleep(1)
-        date_r = f'2023-11-{i:02}'
-        print(date_r)
-        response_server = RubUSD.get_response_currency_date(date_r, source_currencies, currencies)
-        print(response_server)
-        val = RubUSD.parse_get_currency_date(response_server, currency_from_to)
-
-        res_list.append(val)
-    print(res_list)
-res()
+    def parse_server_response_curr(self, currency_server_response, one_curr:str)->str:
+        # Получаем числовое значение о валюте, парсим ответ сервера
+        result = currency_server_response.json()
+        return result.get('data').get(one_curr)
 
 
 
+def get_res_dict():
+    # Получить курс рубля к доллару и евро к доллару за каждый день ноября 2023 года - и записать в 1 csv файл в 3 колонки
+    usdrub_eurrub = Currency('USDRUB,EURRUB')
+    data_list = []
+    val_USDRUB_list = []
+    val_EURRUB_list = []
+    for day in range(1, 31): # В ноябре 30 дней
+        curs_date = f'2018-11-{day:02}'
+        response_server = usdrub_eurrub.get_curr_server_response(curs_date)
+        val_USDRUB = usdrub_eurrub.parse_server_response_curr(response_server, 'USDRUB')
+        val_EURRUB = usdrub_eurrub.parse_server_response_curr(response_server, 'EURRUB')
+        val_USDRUB_list.append(val_USDRUB)
+        val_EURRUB_list.append(val_EURRUB)
+        data_list.append(curs_date)
 
+    res_dict = {'Дата': data_list, 'USDRUB': val_USDRUB_list, 'EURRUB': val_EURRUB_list}
 
+    return (res_dict)
 
+def tocsv(res_dict, name_file):
+    df = pd.DataFrame(res_dict)
+    df.to_csv(name_file, index=False)
 
-
+res_dict = get_res_dict()
+name_file_csv = "file_csv.csv" # например name_file.csv
+tocsv(res_dict, name_file_csv)
