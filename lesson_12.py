@@ -9,17 +9,30 @@ import time
 import requests
 import pandas as pd
 
+
+# Получение валюты с сайта currate.ru.
+# Инициализация например 'USDRUB,EURRUB'. На выходе словарь {'USDRUB': '65.8644', 'EURRUB': '74.5241'}
 class Currency:
+
     __api_key = '15a7f1474ead9825c1b17e37c52009b4'
 
-    def __init__(self, curr: str):
-        if self.__validate_val(curr, str):
-            self.curr = curr
+    def __init__(self, curr):
+        self.__curr = curr
 
-    @classmethod
-    def __validate_val(cls, val, type_val):  # Валидатор значений
-        if isinstance(val, type_val):
-            return True
+    @property
+    def curr(self):
+        return self.__curr
+    @curr.setter
+    def curr(self, curr):
+        if isinstance(curr, str):
+            self.__curr = curr
+        else:
+            raise ValueError
+
+    # @classmethod
+    # def __validate_val(cls, val, type_val):  # Валидатор значений
+    #     if isinstance(val, type_val):
+    #         return True
 
     # Получаем значение валют
     def get_currency_value (self, curs_date='2018-11-01') -> {}:
@@ -43,70 +56,49 @@ class Currency:
 
         return currency_value.get('data')
 
+# Выгрузка словаря в CSV
+class Unloading:
 
+    def __init__(self, source_dictionary):
+        self.__source_dictionary = source_dictionary
 
+    @property
+    def source_dictionary(self):
+        return self.__source_dictionary
+    @source_dictionary.setter
+    def source_dictionary(self, curr):
+        if isinstance(__source_dictionary, dict):
+            self.__source_dictionary = source_dictionary
+        else:
+            raise ValueError
 
+    # Выгрузка словаря в CSV без индекса
+    def to_csv_noindex(self, file_name):
+        df = pd.DataFrame(self.__source_dictionary)
+        df.to_csv(file_name, index=False)
 
+def dz_lesson12():
 
+    usdrub_eurrub = Currency('USDRUB,EURRUB')
+    data_list = []
+    val_USDRUB_list = []
+    val_EURRUB_list = []
+    for day in range(1, 31):  # В ноябре 30 дней
+        curs_date = f'2018-11-{day:02}'
+        response_server = usdrub_eurrub.get_currency_value(curs_date)
+        val_USDRUB = response_server.get('USDRUB')
+        val_EURRUB = response_server.get('EURRUB')
+        val_USDRUB_list.append(val_USDRUB)
+        val_EURRUB_list.append(val_EURRUB)
+        data_list.append(curs_date)
 
+    res_dict = {'Дата': data_list, 'USDRUB': val_USDRUB_list, 'EURRUB': val_EURRUB_list}
 
-    #     l_curr = self.curr.split(",")  # Строку преобразовываем в список
-    #
-    #     print()
-    #     print()
-    #
-    #     cur_val = dict()
-    #     for cur in l_curr:
-    #         self._parse_server_response_curr(currency_server_response, cur)
-    #         cur_val[cur] =
-    #
-    #
-    # # Получаем числовое значение о валюте, парсим ответ сервера
-    # def _parse_server_response_curr(self, currency_server_response, currency) -> str:
-    #     try:
-    #         currency_json = currency_server_response.json()
-    #         val_currency = currency_json.get('data').get(currency)
-    #         return val_currency
-    #     except:
-    #         print('Ошибка в распарсивание данных')
-    #         exit()
+    result = Unloading(res_dict)
+    print(result.source_dictionary)
+    result.to_csv_noindex(file_name="test2.csv")
 
+    return (res_dict)
 
+print(dz_lesson12())
 
-
-
-usdrub_eurrub = Currency('USDRUB,EURRUB')
-
-print(usdrub_eurrub.get_currency_value())
-print(type(usdrub_eurrub.get_currency_value()))
-
-
-#
-# def get_res_dict():
-#     # Получить курс рубля к доллару и евро к доллару за каждый день ноября 2023 года - и записать в 1 csv файл в 3 колонки
-#     usdrub_eurrub = Currency('USDRUB,EURRUB')
-#     data_list = []
-#     val_USDRUB_list = []
-#     val_EURRUB_list = []
-#     for day in range(1, 31):  # В ноябре 30 дней
-#         curs_date = f'2018-11-{day:02}'
-#         response_server = usdrub_eurrub.get_curr_server_response(curs_date)
-#         val_USDRUB = usdrub_eurrub.parse_server_response_curr(response_server, 'USDRUB')
-#         val_EURRUB = usdrub_eurrub.parse_server_response_curr(response_server, 'EURRUB')
-#         val_USDRUB_list.append(val_USDRUB)
-#         val_EURRUB_list.append(val_EURRUB)
-#         data_list.append(curs_date)
-#
-#     res_dict = {'Дата': data_list, 'USDRUB': val_USDRUB_list, 'EURRUB': val_EURRUB_list}
-#
-#     return (res_dict)
-#
-#
-# def tocsv(res_dict, name_file):
-#     df = pd.DataFrame(res_dict)
-#     df.to_csv(name_file, index=False)
-#
-#
-# res_dict = get_res_dict()
-# name_file_csv = "file_csv.csv"  # например name_file.csv
-# tocsv(res_dict, name_file_csv)
