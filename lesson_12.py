@@ -10,6 +10,7 @@ import requests
 import pandas as pd
 
 
+
 # Получение валюты с сайта currate.ru.
 # Инициализация например 'USDRUB,EURRUB'. На выходе словарь {'USDRUB': '65.8644', 'EURRUB': '74.5241'}
 class Currency:
@@ -73,9 +74,14 @@ class Unloading:
             raise ValueError
 
     # Выгрузка словаря в CSV без индекса
-    def to_csv_noindex(self, file_name):
+    def to_csv_no_index(self, file_name):
         df = pd.DataFrame(self.__source_dictionary)
         df.to_csv(file_name, index=False)
+
+    def to_csv_index(self, file_name):
+        df = pd.DataFrame(data = self.__source_dictionary)
+        df.to_csv(file_name, index=True)
+        print(df)
 
 def dz_lesson12():
 
@@ -83,7 +89,7 @@ def dz_lesson12():
     data_list = []
     val_USDRUB_list = []
     val_EURRUB_list = []
-    for day in range(1, 31):  # В ноябре 30 дней
+    for day in range(1, 5):  # В ноябре 30 дней
         curs_date = f'2018-11-{day:02}'
         response_server = usdrub_eurrub.get_currency_value(curs_date)
         val_USDRUB = response_server.get('USDRUB')
@@ -95,8 +101,8 @@ def dz_lesson12():
     res_dict = {'Дата': data_list, 'USDRUB': val_USDRUB_list, 'EURRUB': val_EURRUB_list}
 
     result = Unloading(res_dict)
-    print(result.source_dictionary)
-    result.to_csv_noindex(file_name="test2.csv")
+
+    result.to_csv_index(file_name="test4.csv")
 
     return (res_dict)
 
