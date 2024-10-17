@@ -30,11 +30,6 @@ class Currency:
         else:
             raise ValueError
 
-    # @classmethod
-    # def __validate_val(cls, val, type_val):  # Валидатор значений
-    #     if isinstance(val, type_val):
-    #         return True
-
     # Получаем значение валют
     def get_currency_value (self, curs_date='2018-11-01') -> {}:
         time.sleep(1)  # Требование сервиса 1 запрос 1 в секунду
@@ -85,20 +80,23 @@ class Unloading:
 
 def dz_lesson12():
 
-    usdrub_eurrub = Currency('USDRUB,EURRUB')
+    usdrub_eurrub = Currency('USDRUB,EURRUB,EURGBP')
     data_list = []
     val_USDRUB_list = []
     val_EURRUB_list = []
+    val_EURGBP_list = []
     for day in range(1, 5):  # В ноябре 30 дней
         curs_date = f'2018-11-{day:02}'
         response_server = usdrub_eurrub.get_currency_value(curs_date)
         val_USDRUB = response_server.get('USDRUB')
         val_EURRUB = response_server.get('EURRUB')
+        val_EURGBP = response_server.get('EURGBP')
         val_USDRUB_list.append(val_USDRUB)
         val_EURRUB_list.append(val_EURRUB)
+        val_EURGBP_list.append(val_EURGBP)
         data_list.append(curs_date)
 
-    res_dict = {'Дата': data_list, 'USDRUB': val_USDRUB_list, 'EURRUB': val_EURRUB_list}
+    res_dict = {'Дата': data_list, 'USDRUB': val_USDRUB_list, 'EURRUB': val_EURRUB_list, 'EURGBP': val_EURGBP}
 
     result = Unloading(res_dict)
 
@@ -106,5 +104,9 @@ def dz_lesson12():
 
     return (res_dict)
 
-print(dz_lesson12())
+
+if __name__ == '__main__':
+    print(dz_lesson12())
+
+# print(dz_lesson12())
 
