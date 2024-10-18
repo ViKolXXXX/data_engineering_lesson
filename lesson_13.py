@@ -5,13 +5,23 @@ import json
 import yaml
 from lesson_12 import Currency
 
+# Переписанный класс получения курса
+class CurrencyYAML(Currency):
+    def __init__(self, curr):
+        super().__init__(curr = curr)
+        self._curr = self.read_file_yaml()
 
-
-
-a = Currency('USDRUB,EURRUB,EURGBP')
+    def read_file_yaml(self):
+       name_file = 'currency.yaml'
+       with open(f'{name_file}') as file:
+            read_list = yaml.load(file, Loader=yaml.FullLoader)
+            res = {','.join(read_list.values())}
+            res = str(res)
+            res = res.replace("{", "").replace("}", "").replace("'", "")
+            return res
+# Получение валюты, список курса из YAML файла
+a = CurrencyYAML('USDRUB,EURRUB,EURGBP')
 print(a.get_currency_value())
-
-
 
 class Pogoda:
 
@@ -52,7 +62,7 @@ class Pogoda:
         with open(f'{name_file}') as file:
             read_list = yaml.load(file, Loader=yaml.FullLoader)
             return read_list[city]
-
+# Получение погоды, список городов из YAML файла
 moskva = Pogoda('Москва')
 perm = Pogoda('Пермь')
 sohi = Pogoda('Сочи')

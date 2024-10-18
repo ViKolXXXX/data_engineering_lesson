@@ -18,15 +18,15 @@ class Currency:
     __api_key = '15a7f1474ead9825c1b17e37c52009b4'
 
     def __init__(self, curr):
-        self.__curr = curr
+        self._curr = curr
 
     @property
     def curr(self):
-        return self.__curr
+        return self._curr
     @curr.setter
     def curr(self, curr):
         if isinstance(curr, str):
-            self.__curr = curr
+            self._curr = curr
         else:
             raise ValueError
 
@@ -34,7 +34,7 @@ class Currency:
     def get_currency_value (self, curs_date='2018-11-01') -> {}:
         time.sleep(1)  # Требование сервиса 1 запрос 1 в секунду
         curs_date = datetime.strptime(curs_date, "%Y-%m-%d").isoformat()
-        URL = (f' https://currate.ru/api/?get=rates&pairs={self.curr}&date={curs_date}&key={self.__api_key}')
+        URL = (f' https://currate.ru/api/?get=rates&pairs={self._curr}&date={curs_date}&key={self.__api_key}')
 
         try:
             currency_server_response = requests.get(url=URL)
@@ -88,6 +88,7 @@ def dz_lesson12():
     for day in range(1, 5):  # В ноябре 30 дней
         curs_date = f'2018-11-{day:02}'
         response_server = usdrub_eurrub.get_currency_value(curs_date)
+        print(response_server)
         val_USDRUB = response_server.get('USDRUB')
         val_EURRUB = response_server.get('EURRUB')
         val_EURGBP = response_server.get('EURGBP')
