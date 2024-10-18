@@ -53,7 +53,7 @@ class Format:
 
     def read_file_json(self, name_file):
         with open(f'{name_file}') as openfile:
-            read_list = json_object = json.load(openfile)
+            read_list = json.load(openfile)
             return  read_list
 
     # CSV
