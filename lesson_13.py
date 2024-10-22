@@ -4,6 +4,12 @@ import requests
 import json
 import yaml
 from lesson_12 import Currency
+import sys
+sys.path.append("..")
+from config.global_config import *
+
+
+
 
 # Переписанный класс получения курса
 class CurrencyYAML(Currency):
@@ -12,20 +18,27 @@ class CurrencyYAML(Currency):
         self._curr = self.read_file_yaml()
 
     def read_file_yaml(self):
-       name_file = 'currency.yaml'
-       with open(f'{name_file}') as file:
-            read_list = yaml.load(file, Loader=yaml.FullLoader)
-            res = {','.join(read_list.values())}
-            res = str(res)
-            res = res.replace("{", "").replace("}", "").replace("'", "")
-            return res
+       name_file = 'config/currency.yaml'
+       try:
+           with open(f'{name_file}') as file:
+               read_list = yaml.load(file, Loader=yaml.FullLoader)
+               res = {','.join(read_list.values())}
+               res = str(res)
+               res = res.replace("{", "").replace("}", "").replace("'", "")
+               return res
+       except Exception as e:
+           print(f'{e} Ошибка при открытии yaml файла с валютами')
+
+
+
 # Получение валюты, список курса из YAML файла
 a = CurrencyYAML('USDRUB,EURRUB,EURGBP')
 print(a.get_currency_value())
 
 class Pogoda:
 
-    __access_key = "09cc2d8a-ad09-4f85-9ebd-0001c32e9170"
+    __access_key = API_key_pogoda
+
     def __init__(self, city):
         self.city = city
 
@@ -43,9 +56,16 @@ class Pogoda:
             'lon': lon,
             'lang': 'ru_RU'
         }
-        url = 'https://api.weather.yandex.ru/v2/forecast'
+        url = URL_pogoda
 
-        response = requests.get(url, params=params, headers=headers)
+        try:
+            response = requests.get(url, params=params, headers=headers)
+        except ConnectionError as e:
+            print(f'Подключение к сервису погоды - {e}')
+            exit()
+        except Exception as e:
+            print(f'Подкючение к сервису погоды')
+            exit()
 
         if response.status_code == 200:
             data = response.json()
@@ -58,7 +78,7 @@ class Pogoda:
     # name_city: 'Москва', 'Пермь' и т.д.
     def _get_coords_city(self, city):
 
-        name_file = 'cities_coords.yaml'
+        name_file = 'config/cities_coords.yaml'
         with open(f'{name_file}') as file:
             read_list = yaml.load(file, Loader=yaml.FullLoader)
             return read_list[city]

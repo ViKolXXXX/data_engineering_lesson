@@ -9,13 +9,17 @@ import time
 import requests
 import pandas as pd
 
+import sys
+sys.path.append("..")
+from config.global_config import API_key_currency
+
 
 
 # Получение валюты с сайта currate.ru.
 # Инициализация например 'USDRUB,EURRUB'. На выходе словарь {'USDRUB': '65.8644', 'EURRUB': '74.5241'}
 class Currency:
 
-    __api_key = '15a7f1474ead9825c1b17e37c52009b4'
+    __api_key = API_key_currency
 
     def __init__(self, curr):
         self._curr = curr
@@ -34,18 +38,18 @@ class Currency:
     def get_currency_value (self, curs_date='2018-11-01') -> {}:
         time.sleep(1)  # Требование сервиса 1 запрос 1 в секунду
         curs_date = datetime.strptime(curs_date, "%Y-%m-%d").isoformat()
-        URL = (f' https://currate.ru/api/?get=rates&pairs={self._curr}&date={curs_date}&key={self.__api_key}')
+        URL = (f' https://currate.ru/api/?get=rates&pairs={str(self._curr)}&date={str(curs_date)}&key={str(self.__api_key)}')
 
         try:
             currency_server_response = requests.get(url=URL)
         except requests.ConnectionError as e:
-            print("Ошибка подключения:", e)
+            print(f"Подключение к сервису валюты -{e}")
             exit()
         except requests.Timeout as e:
-            print("Ошибка тайм-аута:", e)
+            print(f"Подключение к сервису валюты -{e}")
             exit()
         except requests.RequestException as e:
-            print("Ошибка запроса:", e)
+            print(f"Подключение к сервису валюты -{e}")
             exit()
 
         currency_value =  currency_server_response.json()
