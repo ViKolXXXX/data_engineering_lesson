@@ -7,9 +7,7 @@ from lesson_12 import Currency
 import sys
 sys.path.append("..")
 from config.global_config import *
-
-
-
+import os
 
 # Переписанный класс получения курса
 class CurrencyYAML(Currency):
@@ -18,22 +16,26 @@ class CurrencyYAML(Currency):
         self._curr = self.read_file_yaml()
 
     def read_file_yaml(self):
-       name_file = 'config/currency.yaml'
-       try:
+        outdir = 'config'
+        fullname = os.path.join(os.path.dirname(__file__), outdir)
+        name_file = f'{fullname}/currency.yaml'
+        print(name_file)
+        try:
            with open(f'{name_file}') as file:
                read_list = yaml.load(file, Loader=yaml.FullLoader)
                res = {','.join(read_list.values())}
                res = str(res)
                res = res.replace("{", "").replace("}", "").replace("'", "")
                return res
-       except Exception as e:
+        except Exception as e:
            print(f'{e} Ошибка при открытии yaml файла с валютами')
 
+    def get_one_curr(self, curr):
+        data = super().get_currency_value(curs_date='2018-11-01')
+        return f'{curr}: {data[curr]}'
 
 
-# Получение валюты, список курса из YAML файла
-a = CurrencyYAML('USDRUB,EURRUB,EURGBP')
-print(a.get_currency_value())
+
 
 class Pogoda:
 
@@ -72,24 +74,32 @@ class Pogoda:
             return  data["fact"]["temp"]
         else:
             # Выводим код ошибки
-            return  response.status_code
+            return  f'Погоды нет - код ошибки {response.status_code}'
 
 
     # name_city: 'Москва', 'Пермь' и т.д.
+    # Получение погоды, список городов из YAML файла
     def _get_coords_city(self, city):
-
-        name_file = 'config/cities_coords.yaml'
+        outdir = 'config'
+        fullname = os.path.join(os.path.dirname(__file__), outdir)
+        name_file = f'{fullname}/cities_coords.yaml'
         with open(f'{name_file}') as file:
             read_list = yaml.load(file, Loader=yaml.FullLoader)
             return read_list[city]
-# Получение погоды, список городов из YAML файла
-moskva = Pogoda('Москва')
-perm = Pogoda('Пермь')
-sohi = Pogoda('Сочи')
-yakutck = Pogoda('Якутск')
-print(f'Температура воздуха в {moskva.city} - {moskva.get_pogoda()}')
-print(f'Температура воздуха в {perm.city} - {perm.get_pogoda()}')
-print(f'Температура воздуха в {sohi.city} - {sohi.get_pogoda()}')
-print(f'Температура воздуха в {yakutck.city} - {yakutck.get_pogoda()}')
+
+
+
+if __name__ == '__main__':
+    # Получение валюты, список курса из YAML файла
+    a = CurrencyYAML('USDRUB,EURRUB,EURGBP')
+    print(a.get_one_curr('USDRUB'))
+    moskva = Pogoda('Москва')
+    perm = Pogoda('Пермь')
+    sohi = Pogoda('Сочи')
+    yakutck = Pogoda('Якутск')
+    print(f'Температура воздуха в {moskva.city} - {moskva.get_pogoda()}')
+    print(f'Температура воздуха в {perm.city} - {perm.get_pogoda()}')
+    print(f'Температура воздуха в {sohi.city} - {sohi.get_pogoda()}')
+    print(f'Температура воздуха в {yakutck.city} - {yakutck.get_pogoda()}')
 
 

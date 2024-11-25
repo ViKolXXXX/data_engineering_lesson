@@ -62,15 +62,15 @@ class Unloading:
     def __init__(self, source_dictionary):
         self.__source_dictionary = source_dictionary
 
-    @property
-    def source_dictionary(self):
-        return self.__source_dictionary
-    @source_dictionary.setter
-    def source_dictionary(self, curr):
-        if isinstance(__source_dictionary, dict):
-            self.__source_dictionary = source_dictionary
-        else:
-            raise ValueError
+    # @property
+    # def source_dictionary(self):
+    #     return self.__source_dictionary
+    # @source_dictionary.setter
+    # def source_dictionary(self, curr):
+    #     if isinstance(__source_dictionary, dict):
+    #         self.__source_dictionary = source_dictionary
+    #     else:
+    #         raise ValueError
 
     # Выгрузка словаря в CSV без индекса
     def to_csv_no_index(self, file_name):
